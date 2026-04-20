@@ -1,23 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Forecast Website</title>
-    <link href="./output.css" rel="stylesheet">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Forecast App</title>
+  <link rel="stylesheet" href="./output.css" />
 </head>
-<body>
-    <div>
-        <div>
-            <header>
-                <p>Weather Forecast</p>
-                <h1>Weather Dashboard</h1>
-                <p>Search a city, use your current location, view today’s weather, and check the extended 5-day forecast.</p>
+<body class="min-h-screen bg-slate-950 text-white">
+  <div
+    id="appBackground"
+    class="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 transition-all duration-500"
+  >
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <header class="mb-8">
+        <div class="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 shadow-2xl">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p class="text-sky-300 text-sm font-medium tracking-[0.2em] uppercase">Weather Forecast</p>
+              <h1 class="mt-2 text-3xl sm:text-4xl font-bold">Weather Dashboard</h1>
+              <p class="mt-2 text-slate-300 max-w-2xl">
+                Search a city, use your current location, view today’s weather, and check the extended 5-day forecast.
+              </p>
+            </div>
 
-                <script src="./index.js"></script>
-            </header>
+            <div class="grid grid-cols-2 gap-3 sm:flex sm:items-center">
+              <button
+                id="celsiusBtn"
+                class="unit-btn rounded-2xl bg-sky-500 px-4 py-2.5 font-semibold text-white shadow-lg transition hover:bg-sky-600"
+                data-unit="C"
+              >
+                °C
+              </button>
+              <button
+                id="fahrenheitBtn"
+                class="unit-btn rounded-2xl bg-white/10 px-4 py-2.5 font-semibold text-white shadow-lg transition hover:bg-white/20"
+                data-unit="F"
+              >
+                °F
+              </button>
+            </div>
+          </div>
         </div>
+      </header>
+
+      <div id="messageBox" class="hidden mb-6 rounded-2xl border px-4 py-4 text-sm font-medium shadow-lg"></div>
+
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <aside class="xl:col-span-4">
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl">
+            <h2 class="text-xl font-semibold">Search Weather</h2>
+            <p class="mt-1 text-sm text-slate-300">Enter a city name or use your live location.</p>
+
+            <div class="mt-5 space-y-4">
+              <div>
+                <label for="cityInput" class="mb-2 block text-sm font-medium text-slate-200">City Name</label>
+                <input
+                  id="cityInput"
+                  type="text"
+                  placeholder="Enter city name"
+                  class="w-full rounded-2xl border border-white/10 bg-white/90 px-4 py-3 text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:shadow-lg placeholder:text-slate-500"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                  id="searchBtn"
+                  class="rounded-2xl bg-sky-500 px-4 py-3 font-semibold text-white shadow-lg transition hover:bg-sky-600"
+                >
+                  Search
+                </button>
+                <button
+                  id="locationBtn"
+                  class="rounded-2xl bg-emerald-500 px-4 py-3 font-semibold text-white shadow-lg transition hover:bg-emerald-600"
+                >
+                  Current Location
+                </button>
+              </div>
+
+              <div id="recentWrapper" class="hidden">
+                <label for="recentCities" class="mb-2 block text-sm font-medium text-slate-200">Recently Searched Cities</label>
+                <select
+                  id="recentCities"
+                  class="w-full rounded-2xl border border-white/10 bg-white/90 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400"
+                >
+                  <option value="">Select a city</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+              <h3 class="font-semibold text-lg">Included Features</h3>
+              <ul class="mt-3 space-y-2 text-sm text-slate-300">
+                <li>City-based forecast search</li>
+                <li>Current location weather</li>
+                <li>Recent cities dropdown using localStorage</li>
+                <li>Today’s weather summary</li>
+                <li>5-day forecast cards</li>
+                <li>Extreme temperature alerts</li>
+                <li>Dynamic weather-based background</li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+
+        <main class="xl:col-span-8 space-y-6">
+          <section class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-2xl">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p class="text-sm uppercase tracking-[0.2em] text-sky-300">Current Weather</p>
+                <h2 id="cityName" class="mt-2 text-3xl sm:text-4xl font-bold">No city selected</h2>
+                <p id="currentDate" class="mt-2 text-slate-300">Search for a city to view weather details</p>
+                <p id="weatherDescription" class="mt-3 text-lg capitalize text-slate-100"></p>
+              </div>
+
+              <div class="flex items-center gap-4 rounded-3xl bg-white/5 px-5 py-4">
+                <img id="weatherIcon" src="" alt="Weather icon" class="hidden h-20 w-20" />
+                <div>
+                  <p class="text-xs uppercase tracking-[0.2em] text-slate-300">Today's Temperature</p>
+                  <p id="todayTemp" class="mt-2 text-5xl font-extrabold">--</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p class="text-sm text-slate-300">Humidity</p>
+                <p id="humidity" class="mt-2 text-2xl font-bold">--</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p class="text-sm text-slate-300">Wind Speed</p>
+                <p id="windSpeed" class="mt-2 text-2xl font-bold">--</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p class="text-sm text-slate-300">Feels Like</p>
+                <p id="feelsLike" class="mt-2 text-2xl font-bold">--</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p class="text-sm text-slate-300">Condition</p>
+                <p id="conditionMain" class="mt-2 text-2xl font-bold">--</p>
+              </div>
+            </div>
+
+            <div id="customAlert" class="hidden mt-5 rounded-2xl border px-4 py-4 font-semibold shadow-lg"></div>
+          </section>
+
+          <section class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-2xl">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm uppercase tracking-[0.2em] text-sky-300">Extended Forecast</p>
+                <h3 class="mt-2 text-2xl font-bold">5-Day Forecast</h3>
+              </div>
+            </div>
+
+            <div
+              id="forecastContainer"
+              class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5"
+            ></div>
+          </section>
+        </main>
+      </div>
     </div>
+  </div>
+
+  <script src="./index.js"></script>
 </body>
 </html>
